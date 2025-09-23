@@ -25,6 +25,13 @@ class Battle:
             if effect.duration <= 0:
                 self.effects.remove(effect)
 
+    def print_status(self):
+        print(f"Статус после хода:")
+        print(f"  Босс {self.boss.name}: HP = {self.boss.hp}")
+        for member in self.team:
+            print(f"  Игрок {member.name}: HP = {member.hp}")
+        print("-" * 30)
+
     def fight(self):
         print("Начинается бой!")
         while self.boss.is_alive and any(c.is_alive for c in self.team):
@@ -35,16 +42,19 @@ class Battle:
                 if character == self.boss:
                     character.use_skill(self.team)
                 else:
-                    if random.random() < 0.5:
-                        character.basic_attack(self.boss)
+                    if isinstance(character, Healer):
+                        character.use_skill(self.team)
                     else:
-                        if isinstance(character, Healer):
-                            character.use_skill(self.team)
+                        if random.random() < 0.5:
+                            character.basic_attack(self.boss)
                         else:
                             character.use_skill(self.boss)
+                self.print_status()
                 if not self.boss.is_alive:
                     print("Команда выиграла!")
                     return
                 if not any(c.is_alive for c in self.team):
                     print("Босс выиграл!")
                     return
+
+

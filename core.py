@@ -97,3 +97,55 @@ class Healer(Character):
         print(f"{self.name} лечит {target.name} на {heal} здоровья")
         target.hp = min(target.hp + heal, target.__class__.hp.max_value)
         self.mp -= 15
+
+# core.py
+from mixins import CritMixin, LoggerMixin, SilenceMixin
+import random
+
+class Warrior(Character, CritMixin, LoggerMixin):
+    def basic_attack(self, target):
+        if random.random() < 0.3:  # 30% шанс крита
+            self.crit_attack(target)
+            self.log(f"{self.name} провёл критический удар по {target.name}")
+        else:
+            damage = random.randint(self.strength, self.strength * 2)
+            print(f"{self.name} атакует {target.name} на {damage} урона")
+            target.hp -= damage
+
+    def use_skill(self, target):
+        damage = random.randint(self.strength * 2, self.strength * 3)
+        print(f"{self.name} использует мощный удар воина на {damage} урона по {target.name}")
+        target.hp -= damage
+
+class Mage(Character, SilenceMixin, LoggerMixin):
+    def use_skill(self, target):
+        if random.random() < 0.2:  # 20% шанс заглушить Босса
+            self.silence(target)
+            self.log(f"{self.name} заглушает {target.name}")
+        damage = random.randint(self.intellect * 3, self.intellect * 4)
+        print(f"{self.name} использует заклинание по {target.name} ({damage} урона)")
+        target.hp -= damage
+        self.mp -= 20
+
+    def basic_attack(self, target):
+        damage = random.randint(self.intellect, self.intellect * 2)
+        print(f"{self.name} колдует базовое заклинание, нанося {damage} урона {target.name}")
+        target.hp -= damage
+        self.mp -= 5
+
+class Healer(Character, LoggerMixin):
+    def use_skill(self, team):
+        possible_targets = [c for c in team if c.is_alive]
+        if not possible_targets:
+            self.log(f"{self.name} не может лечить")
+            return
+        target = random.choice(possible_targets)
+        heal = random.randint(self.intellect * 2, self.intellect * 4)
+        print(f"{self.name} лечит {target.name} на {heal} здоровья")
+        target.hp = min(target.hp + heal, target.__class__.hp.max_value)
+        self.mp -= 15
+
+    def basic_attack(self, target):
+        damage = random.randint(self.intellect // 2, self.intellect)
+        print(f"{self.name} наносит слабый удар {target.name} на {damage} урона")
+        target.hp -= damage
