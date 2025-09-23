@@ -6,7 +6,7 @@ class Item:
     def use(self, target):
         print(f"{target.name} использует предмет {self.name}")
         if self.effect:
-            self.effect.apply(target)
+            target.add_effect(self.effect)
 
 
 class Inventory:

@@ -22,7 +22,7 @@ class DefensiveStrategy(Strategy):
 
 
 class Boss(Character):
-    def __init__(self, name, level=20, hp=600, mp=100, strength=30, agility=15, intellect=20):
+    def __init__(self, name, level=20, hp=550, mp=100, strength=30, agility=15, intellect=20):
         super().__init__(name, level, hp, mp, strength, agility, intellect)
         self.strategy = AggressiveStrategy()
 

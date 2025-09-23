@@ -37,6 +37,20 @@ class Human:
         self.strength = strength
         self.agility = agility
         self.intellect = intellect
+        self.active_effects = []
+
+    def add_effect(self, effect):
+        print(f"Применяется эффект {effect.name} к {self.name}")
+        self.active_effects.append(effect)
+
+    def apply_effects(self):
+        # Применяет все эффекты к персонажу и уменьшает их длительность
+        for effect in self.active_effects[:]:
+            effect.apply(self)
+            effect.duration -= 1
+            if effect.duration <= 0:
+                print(f"Эффект {effect.name} на {self.name} закончился")
+                self.active_effects.remove(effect)
 
     @property
     def is_alive(self):
@@ -101,6 +115,7 @@ class Healer(Character):
 # core.py
 from mixins import CritMixin, LoggerMixin, SilenceMixin
 import random
+from effects import SilenceEffect
 
 class Warrior(Character, CritMixin, LoggerMixin):
     def basic_attack(self, target):
@@ -119,9 +134,11 @@ class Warrior(Character, CritMixin, LoggerMixin):
 
 class Mage(Character, SilenceMixin, LoggerMixin):
     def use_skill(self, target):
-        if random.random() < 0.2:  # 20% шанс заглушить Босса
-            self.silence(target)
-            self.log(f"{self.name} заглушает {target.name}")
+        if random.random() < 0.5:
+            silence_effect = SilenceEffect("Молчание", duration=2)
+            target.add_effect(silence_effect)
+            self.log(f"{self.name} заглушает {target.name} на 2 хода")
+
         damage = random.randint(self.intellect * 3, self.intellect * 4)
         print(f"{self.name} использует заклинание по {target.name} ({damage} урона)")
         target.hp -= damage

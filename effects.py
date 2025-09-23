@@ -17,3 +17,7 @@ class Debuff(Effect):
     def apply(self, target):
         target.strength -= 5
         print(f"{target.name} получает дебафф силы -5")
+
+class SilenceEffect(Effect):
+    def apply(self, target):
+        print(f"{target.name} обезмолвлен (не может использовать навыки)!")
